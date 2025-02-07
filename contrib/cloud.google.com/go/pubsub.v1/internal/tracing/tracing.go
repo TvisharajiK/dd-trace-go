@@ -112,6 +112,7 @@ func TraceReceiveFunc(s Subscription, opts ...Option) func(ctx context.Context, 
 			tracer.Tag(ext.MessagingSystem, ext.MessagingSystemGCPPubsub),
 			tracer.ChildOf(parentSpanCtx),
 		}
+
 		if cfg.serviceName != "" {
 			opts = append(opts, tracer.ServiceName(cfg.serviceName))
 		}
@@ -129,3 +130,6 @@ func TraceReceiveFunc(s Subscription, opts ...Option) func(ctx context.Context, 
 		return ctx, func() { span.Finish() }
 	}
 }
+
+
+
