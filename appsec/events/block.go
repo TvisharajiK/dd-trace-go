@@ -30,3 +30,5 @@ func IsSecurityError(err error) bool {
 	var secErr *BlockingSecurityEvent
 	return errors.As(err, &secErr)
 }
+
+
