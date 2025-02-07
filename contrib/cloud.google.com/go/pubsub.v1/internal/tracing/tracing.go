@@ -112,6 +112,7 @@ func TraceReceiveFunc(s Subscription, opts ...Option) func(ctx context.Context, 
 			tracer.Tag(ext.MessagingSystem, ext.MessagingSystemGCPPubsub),
 			tracer.ChildOf(parentSpanCtx),
 		}
+
 		if cfg.serviceName != "" {
 			opts = append(opts, tracer.ServiceName(cfg.serviceName))
 		}
@@ -129,3 +130,20 @@ func TraceReceiveFunc(s Subscription, opts ...Option) func(ctx context.Context, 
 		return ctx, func() { span.Finish() }
 	}
 }
+
+// TraceAcknowledge traces the acknowledgment of a received message.
+
+func TraceAcknowledge(ctx context.Context, msg *Message) {
+	span, _ := tracer.StartSpanFromContext(ctx, "pubsub.acknowledge",
+		tracer.SpanType(ext.SpanTypeMessageConsumer),
+		tracer.Tag("message_id", msg.ID),
+		tracer.Tag("message_size", len(msg.Data)),
+		tracer.Tag("ordering_key", msg.OrderingKey),
+		tracer.Tag(ext.Component, componentName),
+		tracer.Tag(ext.SpanKind, ext.SpanKindConsumer),
+		tracer.Tag(ext.MessagingSystem, ext.MessagingSystemGCPPubsub),
+	)
+	span.Finish()
+}
+
+
